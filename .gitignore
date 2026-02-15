@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+*.pyc
+.env
+# Local configuration files
+#ignore all this file on github
