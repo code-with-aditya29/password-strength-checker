@@ -1,20 +1,124 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Password Strength Checker</title>
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/png">
+
 </head>
 <body>
-    <h2>Password Strength Checker</h2>
 
-    <form method="POST">
-        <input type="password" name="password" placeholder="Enter password" required>
-        <button type="submit">Check</button>
-    </form>
+<div class="container">
 
-    {% if strength %}
-        <h3>Strength: {{ strength }}</h3>
-        <p>Entropy Score: {{ entropy }}</p>
-    {% endif %}
+    <h1><i class="fa-solid fa-lock"></i> Password Strength Checker</h1>
+
+    <!-- Password Input with Toggle -->
+    <div class="input-wrapper">
+        <input type="password" id="password" placeholder="Enter your password">
+        <i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
+    </div>
+
+    <!-- Strength Bar -->
+    <div id="strength-container">
+        <div id="strength-bar">0%</div>
+    </div>
+
+    <!-- Requirements -->
+    <div class="requirements">
+        <p id="length">• Minimum 8 characters</p>
+        <p id="uppercase">• At least 1 uppercase letter</p>
+        <p id="lowercase">• At least 1 lowercase letter</p>
+        <p id="number">• At least 1 number</p>
+        <p id="special">• At least 1 special character</p>
+    </div>
+
+</div>
+
+<script>
+const passwordInput = document.getElementById("password");
+const strengthBar = document.getElementById("strength-bar");
+const togglePassword = document.getElementById("togglePassword");
+
+const lengthCheck = document.getElementById("length");
+const upperCheck = document.getElementById("uppercase");
+const lowerCheck = document.getElementById("lowercase");
+const numberCheck = document.getElementById("number");
+const specialCheck = document.getElementById("special");
+
+/* Show / Hide password */
+togglePassword.addEventListener("click", function () {
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        togglePassword.classList.replace("fa-eye", "fa-eye-slash");
+    } else {
+        passwordInput.type = "password";
+        togglePassword.classList.replace("fa-eye-slash", "fa-eye");
+    }
+});
+
+/* Strength Checker */
+passwordInput.addEventListener("input", function () {
+
+    let password = passwordInput.value;
+    let score = 0;
+    let totalChecks = 5;
+
+    if (password.length >= 8) {
+        lengthCheck.style.color = "green";
+        score++;
+    } else {
+        lengthCheck.style.color = "red";
+    }
+
+    if (/[A-Z]/.test(password)) {
+        upperCheck.style.color = "green";
+        score++;
+    } else {
+        upperCheck.style.color = "red";
+    }
+
+    if (/[a-z]/.test(password)) {
+        lowerCheck.style.color = "green";
+        score++;
+    } else {
+        lowerCheck.style.color = "red";
+    }
+
+    if (/[0-9]/.test(password)) {
+        numberCheck.style.color = "green";
+        score++;
+    } else {
+        numberCheck.style.color = "red";
+    }
+
+    if (/[^A-Za-z0-9]/.test(password)) {
+        specialCheck.style.color = "green";
+        score++;
+    } else {
+        specialCheck.style.color = "red";
+    }
+
+    let percentage = (score / totalChecks) * 100;
+
+    strengthBar.style.width = percentage + "%";
+    strengthBar.innerText = percentage + "%";
+
+    if (percentage <= 40) {
+        strengthBar.style.backgroundColor = "#e74c3c";
+    } else if (percentage <= 80) {
+        strengthBar.style.backgroundColor = "#f39c12";
+    } else {
+        strengthBar.style.backgroundColor = "#27ae60";
+    }
+
+});
+</script>
+
 </body>
 </html>
